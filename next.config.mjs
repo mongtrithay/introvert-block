@@ -1,7 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false };
+    return config;
+  },
   images: {
-    domains: ["wallpapercave.com"], // Add any additional domains here
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9999",
+      },
+    ],
   },
 };
 
