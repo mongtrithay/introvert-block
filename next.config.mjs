@@ -1,21 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false };
+    return config;
+  },
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'cf-sparkai-live.s3.amazonaws.com',
-        port: '',
-        pathname: '/**', // This allows all image paths from this hostname
+        protocol: "https",
+        hostname: "**",
       },
       {
-        protocol: 'https',
-        hostname: 'i.pinimg.com',
-        port: '',
-        pathname: '/**', // Existing configuration for Pinimg
+        protocol: "http",
+        hostname: "localhost",
+        port: "9999",
       },
     ],
-    domains: ["wallpapercave.com"], // Add any additional domains here
   },
 };
 
