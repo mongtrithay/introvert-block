@@ -9,7 +9,7 @@ import { FaPen } from "react-icons/fa";
 const Header = () => {
   const [data, setData] = useState([]); // Initialize with an empty array
   const [error, setError] = useState(null);
-  const token = localStorage.getItem("token"); // Replace with your actual token
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null; // Ensure localStorage is accessed correctly
 
   useEffect(() => {
     const getData = async () => {
@@ -35,9 +35,38 @@ const Header = () => {
       }
     };
 
-    getData();
+    if (token) {
+      getData();
+    }
   }, [token]);
-  console.log("========", data);
+
+  const deleteIcon = async (id, token) => {
+    try {
+      const response = await fetch(
+        `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log(result.message); // Record deleted successfully
+        // Optional: Refresh the data after deletion
+        setData((prevData) =>
+          prevData.blogs.filter((blog) => blog._id !== id)
+        );
+      } else {
+        console.error(result.error);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
 
   return (
     <>
@@ -66,15 +95,16 @@ const Header = () => {
       </header>
       <div className="flex justify-center items-center w-full h-auto bg-white ">
         <div className="grid justify-center items-center w-[1750px] h-auto bg-gradient-to-r from-white via-purple-500 to-white pb-10">
-          <div className="flex justify-end items-end  gap-10 pl-24">
-            <button className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10" 
-            >
+          <div className="flex justify-end items-end gap-10 pl-24">
+            <button className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
               Public Page
             </button>
-            <button className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
-              <FaPen />
-              <span>Create</span>
-            </button>
+            <Link href={"/blog"}>
+              <span className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
+                <FaPen />
+                <button>Create</button>
+              </span>
+            </Link>
           </div>
 
           {error && <p className="text-red-500">Error: {error}</p>}
@@ -97,7 +127,7 @@ const Header = () => {
                   />
                 </div>
                 <div className="w-[650px] h-[350px] bg-white">
-                  <div className=" gap-3 flex justify-start pl-5 items-center w-[650px] h-[100px] bg-red-100">
+                  <div className="gap-3 flex justify-start pl-5 items-center w-[650px] h-[100px] bg-red-100">
                     <div className="w-[90px] h-[90px] rounded-full bg-blue-200">
                       <Image
                         className="w-full h-full rounded-full"
@@ -115,7 +145,7 @@ const Header = () => {
                       <button
                         className="btn flex items-end space-x-2 text-black"
                         type="button"
-                        onClick={() => deleteIcon(blog._id)}
+                        onClick={() => deleteIcon(blog._id, token)}
                       >
                         <FaTrash />
                       </button>
@@ -140,31 +170,6 @@ const Header = () => {
       </div>
     </>
   );
-};
-
-const deleteIcon = async (id) => {
-  try {
-    const response = await fetch(
-      `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-        },
-        body: JSON.stringify({ id }),
-      }
-    );
-
-    const result = await response.json();
-    if (response.ok) {
-      console.log(result.message); // Record deleted successfully
-    } else {
-      console.error(result.error);
-    }
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
 };
 
 export default Header;
