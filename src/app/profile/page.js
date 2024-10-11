@@ -83,7 +83,7 @@ const Header = () => {
                 Public Page
               </button>
             </Link>
-            <Link href={"/blog"}>
+            <Link href={"/create"}>
               <span className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
                 <FaPen />
                 <button>Create</button>
@@ -172,5 +172,31 @@ const Header = () => {
     </>
   );
 };
+
+const deleteIcon = async (id,token) => {
+  
+    try {
+      const response = await fetch(
+        `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+          body: JSON.stringify({ id }),
+        }
+      );
+  
+      const result = await response.json();
+      if (response.ok) {
+        console.log(result.message); // Record deleted successfully
+      } else {
+        console.error(result.error);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
 
 export default Header;
