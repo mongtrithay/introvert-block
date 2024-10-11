@@ -125,7 +125,7 @@ const Header = () => {
                       <button
                         className="btn flex items-end space-x-2 text-black"
                         type="button"
-                        onClick={() => deleteIcon(blog._id)}
+                        onClick={() => deleteIcon(blog._id, token)}
                       >
                         <FaTrash />
                       </button>
@@ -171,7 +171,8 @@ const Header = () => {
   );
 };
 
-const deleteIcon = async (id) => {
+const deleteIcon = async (id,token) => {
+  
   try {
     const response = await fetch(
       `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
