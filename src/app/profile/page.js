@@ -5,12 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaTrash } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [data, setData] = useState([]); // Initialize with an empty array
   const [error, setError] = useState(null);
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null; 
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +52,10 @@ const Header = () => {
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
   };
+
+  const handleId = async (id) => {
+    router.push(`/contact?id=${id}`)
+  } 
 
   return (
     <>
@@ -99,6 +106,7 @@ const Header = () => {
               <div
                 key={blog._id}
                 className="flex gap-2 w-[1000px] h-[350px] bg-slate-500 mb-4"
+                onClick={() => handleId(blog._id)}
               >
                 <div className="w-[350px] h-[350px] bg-slate-600">
                   <Image
