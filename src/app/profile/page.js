@@ -174,25 +174,16 @@ const Header = () => {
 };
 
 const deleteIcon = async (id,token) => {
-  
-    try {
-      const response = await fetch(
-        `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-          },
-          body: JSON.stringify({ id }),
-        }
-      );
-  
-      const result = await response.json();
-      if (response.ok) {
-        console.log(result.message); // Record deleted successfully
-      } else {
-        console.error(result.error);
+  try {
+    const response = await fetch(
+      `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+        body: JSON.stringify({ id }),
       }
     } catch (error) {
       console.error("An error occurred:", error);
