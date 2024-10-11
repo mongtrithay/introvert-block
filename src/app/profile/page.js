@@ -10,34 +10,45 @@ const Header = () => {
   const [data, setData] = useState([]); // Initialize with an empty array
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token"); // Replace with your actual token
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await fetch(
-          "https://students-hackaton.vercel.app/blog/get-all-blogs?page=1&limit=10",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        setData(data); // Set the fetched data
-      } catch (error) {
-        setError(error.message);
-      }
+    const fetchData = async () => {
+      await getPagination(currentPage);
     };
+    fetchData();
+  }, [currentPage]);
+  const getPagination = async (page) => {
+    try {
+      const response = await fetch(
+        `https://students-hackaton.vercel.app/blog/get-all-blogs?page=${page}&limit=10`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
-    getData();
-  }, [token]);
-  console.log("========", data);
+      const data = await response.json();
+      setData(data); // Set the fetched data
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  const prePage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
 
   return (
     <>
@@ -67,10 +78,11 @@ const Header = () => {
       <div className="flex justify-center items-center w-full h-auto bg-white ">
         <div className="grid justify-center items-center w-[1750px] h-auto bg-gradient-to-r from-white via-purple-500 to-white pb-10">
           <div className="flex justify-end items-end  gap-10 pl-24">
-            <button className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10" 
-            >
-              Public Page
-            </button>
+            <Link href={"/public"}>
+              <button className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
+                Public Page
+              </button>
+            </Link>
             <button className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
               <FaPen />
               <span>Create</span>
@@ -101,9 +113,7 @@ const Header = () => {
                     <div className="w-[90px] h-[90px] rounded-full bg-blue-200">
                       <Image
                         className="w-full h-full rounded-full"
-                        src={
-                          blog.createdBy.profilePicture || "/default-avatar.jpg"
-                        }
+                        src={blog.createdBy.avatar || "/default-avatar.jpg"}
                         alt={blog.createdBy.name}
                         width={90}
                         height={90}
@@ -136,6 +146,25 @@ const Header = () => {
           ) : (
             <p>No blogs available.</p>
           )}
+          <nav className="flex gap-4 w-full justify-end">
+            <button
+              className="border-2 px-4 border-gray-900 rounded"
+              onClick={prePage}
+            >
+              Pre
+            </button>
+            <form action="" method="post" name="test_fn">
+              <h1 className="border-2 px-3 border-gray-400 rounded bg-slate-200 ">
+                {currentPage}
+              </h1>
+            </form>
+            <button
+              className="border-2 px-3 border-gray-900 mr-9 rounded"
+              onClick={nextPage}
+            >
+              Next
+            </button>
+          </nav>
         </div>
       </div>
     </>
