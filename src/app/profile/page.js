@@ -174,6 +174,7 @@ const Header = () => {
 };
 
 const deleteIcon = async (id,token) => {
+  
   try {
     const response = await fetch(
       `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
@@ -185,9 +186,17 @@ const deleteIcon = async (id,token) => {
         },
         body: JSON.stringify({ id }),
       }
-    } catch (error) {
-      console.error("An error occurred:", error);
+    );
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log(result.message); // Record deleted successfully
+    } else {
+      console.error(result.error);
     }
-  };
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};
 
 export default Header;
