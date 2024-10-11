@@ -4,11 +4,13 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaTrash } from "react-icons/fa"; // Import the trash icon
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [data, setData] = useState([]); // Initialize with an empty array
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1); // Use state for page
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +50,10 @@ export default function Page() {
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
   };
+
+  const handleId = async (id) => {
+    router.push(`/contact?id=${id}`)
+  } 
 
   return (
     <>
@@ -92,6 +98,7 @@ export default function Page() {
               <div
                 key={blog._id}
                 className="flex gap-2 w-[1000px] h-[350px] bg-slate-500 mb-4"
+                onClick={() => handleId(blog._id)}
               >
                 <div className="w-[350px] h-[350px] bg-slate-600">
                   <Image
