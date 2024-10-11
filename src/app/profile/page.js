@@ -9,7 +9,7 @@ import { FaPen } from "react-icons/fa";
 const Header = () => {
   const [data, setData] = useState([]); // Initialize with an empty array
   const [error, setError] = useState(null);
-  const token = localStorage.getItem("token"); // Replace with your actual token
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null; 
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -83,10 +83,12 @@ const Header = () => {
                 Public Page
               </button>
             </Link>
-            <button className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
-              <FaPen />
-              <span>Create</span>
-            </button>
+            <Link href={"/create"}>
+              <span className="btn flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 my-10">
+                <FaPen />
+                <button>Create</button>
+              </span>
+            </Link>
           </div>
 
           {error && <p className="text-red-500">Error: {error}</p>}
@@ -109,7 +111,7 @@ const Header = () => {
                   />
                 </div>
                 <div className="w-[650px] h-[350px] bg-white">
-                  <div className=" gap-3 flex justify-start pl-5 items-center w-[650px] h-[100px] bg-red-100">
+                  <div className="gap-3 flex justify-start pl-5 items-center w-[650px] h-[100px] bg-red-100">
                     <div className="w-[90px] h-[90px] rounded-full bg-blue-200">
                       <Image
                         className="w-full h-full rounded-full"
@@ -172,7 +174,6 @@ const Header = () => {
 };
 
 const deleteIcon = async (id,token) => {
-  
   try {
     const response = await fetch(
       `https://students-hackaton.vercel.app/blog/delete-blog/${id}`,
@@ -184,17 +185,9 @@ const deleteIcon = async (id,token) => {
         },
         body: JSON.stringify({ id }),
       }
-    );
-
-    const result = await response.json();
-    if (response.ok) {
-      console.log(result.message); // Record deleted successfully
-    } else {
-      console.error(result.error);
+    } catch (error) {
+      console.error("An error occurred:", error);
     }
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
-};
+  };
 
 export default Header;
